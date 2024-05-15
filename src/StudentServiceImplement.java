@@ -156,6 +156,7 @@ public class StudentServiceImplement implements StudentService {
 
     @Override
     public void updateStudent() {
+        displayForEdit();
         Scanner scanner = new Scanner(System.in);
         System.out.print("[+] Enter student ID to update: ");
         int id = scanner.nextInt();
@@ -205,9 +206,8 @@ public class StudentServiceImplement implements StudentService {
         }
 
         if (found) {
-            saveStudentsToTransaction(students);
+            saveStudents(students);
             System.out.println("[+] Student updated successfully.");
-            displayAllStudents();
         } else {
             System.out.println("[!] Student not found.");
         }
@@ -215,6 +215,7 @@ public class StudentServiceImplement implements StudentService {
 
     @Override
     public void removeStudentById() {
+        displayForEdit();
         Scanner scanner = new Scanner(System.in);
         System.out.print("[+] Enter student ID to remove: ");
         int id = scanner.nextInt();
@@ -224,9 +225,8 @@ public class StudentServiceImplement implements StudentService {
         boolean removed = students.removeIf(student -> student.getStudentId() == id);
 
         if (removed) {
-            saveStudentsToTransaction(students);
+            saveStudents(students);
             System.out.println("[+] Student removed successfully.");
-            displayAllStudents();
         } else {
             System.out.println("[!] Student not found.");
         }
@@ -234,6 +234,7 @@ public class StudentServiceImplement implements StudentService {
 
     @Override
     public void searchStudent() {
+        displayForEdit();
         Scanner scanner = new Scanner(System.in);
         System.out.print("[+] Enter student name to search: ");
         String name = scanner.nextLine().trim().toLowerCase();
@@ -388,6 +389,27 @@ public class StudentServiceImplement implements StudentService {
         return students;
     }
 
+    private void saveStudents(List<Student> students) {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(MAIN_FILE))) {
+            for (Student student : students) {
+                String data = student.getStudentId() + "," +
+                        student.getStudentName() + "," +
+                        student.getStudentBirthYear() + "," +
+                        student.getStudentBirthMonth() + "," +
+                        student.getStudentBirthDay() + "," +
+                        String.join(";", student.getClasses()) + "," +
+                        String.join(";", student.getSubjects()) + "," +
+                        student.getCreatedAt();
+                bufferedWriter.write(data);
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.flush();
+        } catch (IOException e) {
+            System.out.println("[!] Problem during saving students: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     private void saveStudentsToTransaction(List<Student> students) {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(TRANSACTION_FILE))) {
             for (Student student : students) {
@@ -420,5 +442,41 @@ public class StudentServiceImplement implements StudentService {
     private String formatClassesOrSubjects(String csvData) {
         String[] items = csvData.split(";");
         return "[" + String.join(", ", items) + "]";
+    }
+
+    private void displayForEdit() {
+        Table table = new Table(6, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+        table.addCell("ID");
+        table.addCell("STUDENT'S NAME");
+        table.addCell("STUDENT'S DATE OF BIRTH");
+        table.addCell("STUDENT CLASS");
+        table.addCell("STUDENT'S SUBJECT");
+        table.addCell("CREATED/UPDATED AT");
+
+        // Read data from the main file
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(MAIN_FILE))) {
+            String data;
+            while ((data = bufferedReader.readLine()) != null) {
+                String[] values = data.split(",");
+                // Assuming the CSV format is ID, Name, Year, Month, Day, Classes, Subjects, CreatedAt
+                String id = values[0];
+                String name = values[1];
+                String dob = values[2] + "-" + values[3] + "-" + values[4];  // Combining Year, Month, Day
+                String classes = formatClassesOrSubjects(values[5]);
+                String subjects = formatClassesOrSubjects(values[6]);
+                String createdAt = values[7];
+
+                // Add data to the table
+                table.addCell(id);
+                table.addCell(name);
+                table.addCell(dob);
+                table.addCell(classes);
+                table.addCell(subjects);
+                table.addCell(createdAt);
+            }
+            System.out.println(table.render());
+        } catch (Exception exception) {
+            System.out.println("[!] Problem during get all students: " + exception.getMessage());
+        }
     }
 }

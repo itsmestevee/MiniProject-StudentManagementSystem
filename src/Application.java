@@ -6,8 +6,9 @@ public class Application {
 
     public static void main(String[] args) {
         Header.header();
-        checkTransactionFile();
         displayInitialLoadMessage();
+        checkTransactionFile();
+        Transaction.checkAndCommitData();
         while (true) {
             switch (Menu.menu()) {
                 case 1 -> studentService.addNewStudent();
@@ -18,7 +19,7 @@ public class Application {
                 case 6 -> studentService.removeStudentById();
                 case 7 -> studentService.generateDataToFile();
                 case 8 -> studentService.clearAllData();
-                case 99 -> {
+                case 0 -> {
                     System.out.println("Exiting...");
                     Transaction.checkAndCommitData();
                     System.exit(0);

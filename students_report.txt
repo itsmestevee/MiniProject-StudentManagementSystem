@@ -1,0 +1,4 @@
+Student(studentId=daca4e53-2268-4d63-b073-3509afac307b, studentName=Norin, studentBirthYear=2004, studentBirthMonth=4, studentBirthDay=10, date=2004-04-10, classes=[Fundatmental], subjects=[Java,  Web])
+Student(studentId=8a2b3f99-e472-4778-9788-6e4d69faec3a, studentName=Sophat, studentBirthYear=2001, studentBirthMonth=10, studentBirthDay=12, date=2001-10-12, classes=[Fundamental], subjects=[Java,  Web])
+Student(studentId=ed2a7e8e-5014-4040-bde8-1c47f585f7d6, studentName=mey, studentBirthYear=2004, studentBirthMonth=11, studentBirthDay=26, date=2004-11-26, classes=[fundation], subjects=[cs])
+Student(studentId=60abcc7d-1207-4be0-bf26-428f79d1b180, studentName=Aziz, studentBirthYear=2002, studentBirthMonth=10, studentBirthDay=23, date=2002-10-23, classes=[Spring Boot], subjects=[Java,  Sql])
